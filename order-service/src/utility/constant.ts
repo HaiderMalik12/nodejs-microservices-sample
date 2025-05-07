@@ -8,9 +8,3 @@ export const RESPONSE = {
   PAGE_NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500
 };
-
-export const USER_ROLE = {
-  DRIVER: 'driver',
-  ADMIN: 'ADMIN',
-  USER: 'user'
-};

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-
-const responseCode = require('./responseCode');
+import { RESPONSE } from '../utility/responseCode';
 
 type ResponseData = {
   message?: string;
@@ -38,7 +37,7 @@ export function sendSuccessResponse(_: Request, res: Response, data: ResponseDat
 export function sendFailResponse(
   _: Request,
   res: Response,
-  httpCode = responseCode.BAD_REQUEST,
+  httpCode = RESPONSE.BAD_REQUEST,
   message: string,
   data?: Record<string, any>
 ) {

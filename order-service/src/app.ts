@@ -2,16 +2,14 @@ import 'dotenv/config';
 import express from 'express';
 import 'express-async-errors'; // Import the library
 import http from 'http';
-import { mongoDbconnection } from './database/connect';
-import globalErrorHandler from '@logs/middlewares/globalError';
-import { appRoutes } from '@logs/middlewares/routesMiddlewares';
-import { standardMiddlewares } from '@logs/middlewares/standardMiddlewars';
-import { notFoundError } from './middlewares/notFoundError';
-import { syncDispatcherToken } from '@logs/jobs/tokens';
-import cron from 'node-cron';
+import { mongoDBconnection } from './database/connect';
+import globalErrorHandler from '@order/middlewares/globalError';
+import { appRoutes } from '@order/middlewares/routesMiddlewares';
+import { standardMiddlewares } from '@order/middlewares/standardMiddlewars';
+import { notFoundError } from '@order/middlewares/notFoundError';
 
 // Establish MongoDB connection
-mongoDbconnection();
+mongoDBconnection();
 
 // Initialize Express app
 const app = express();
@@ -74,8 +72,3 @@ function onError(error: any) {
 function setupHttpServer() {
   return http.createServer(app);
 }
-// 20th minute of every hour.
-cron.schedule('20 * * * *', async () => {
-  console.log('Running cron job to sync dispatcher token...');
-  await syncDispatcherToken();
-});
