@@ -19,5 +19,5 @@ COPY --from=builder /app/build ./build
 
 # Ensure public/files directory exists
 RUN mkdir -p /app/build/src/public/files
-EXPOSE 3000
+EXPOSE 2005
 CMD [ "npm", "run", "start" ]

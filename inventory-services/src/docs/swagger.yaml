@@ -1,0 +1,501 @@
+openapi: 3.0.0
+info:
+  title: LOGGING SERVICE API
+  version: 1.0.0
+servers:
+  - url: http://localhost:2005/logging
+    description: Local server
+  - url: https://api.dev.zonedeliveryservices.com/logging
+    description: Development server
+  - url: https://api.staging.zonedeliveryservices.com/logging
+    description: Staging server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Coordinate:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+          description: Latitude.
+        lng:
+          type: number
+          format: double
+          description: Longitude.
+        firstState:
+          type: string
+          enum: # Replace with your actual FIRST_STATE enums
+            - login
+            - logout
+            # ... other states
+          description: First state of the coordinates (optional).
+        secondState:
+          type: string
+          enum: # Replace with your actual SECOND_STATE enums
+            - foreground
+            - background
+            # ... other states
+          description: Second state of the coordinates (optional).
+      required:
+        - lat
+        - lng
+    WalletTransactionLog:
+      type: object
+      properties:
+        orderId:
+          type: string
+        type:
+          type: string
+          enum:
+            - before
+            - after
+        entity:
+          type: string
+          enum:
+            - merchant
+            - rider
+        balanceBefore:
+          type: number
+        balanceAfter:
+          type: number
+        holdAmountBefore:
+          type: number
+        holdAmountAfter:
+          type: number
+        earningAmountBefore:
+          type: number
+        earningAmountAfter:
+          type: number
+        storeId:
+          type: string
+        riderId:
+          type: string
+        bookingId:
+          type: string
+        appId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - orderId
+        - type
+        - entity
+paths:
+  /v1/rider/coordinates:
+    post:
+      tags:
+        - Rider Coordinates
+      summary: Save Rider Coordinates
+      description: Saves rider coordinates along with optional user or device identification.
+      parameters:
+        - in: header
+          name: appid
+          schema:
+            type: string
+          required: true
+          description: The application ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              oneOf:
+                - properties:
+                    userId:
+                      type: string
+                    coordinate:
+                      $ref: '#/components/schemas/Coordinate'
+                  required:
+                    - coordinate
+                - properties:
+                    deviceToken:
+                      type: string
+                    coordinate:
+                      $ref: '#/components/schemas/Coordinate'
+                  required:
+                    - coordinate
+      responses:
+        '201':
+          description: Coordinates saved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object # Add the data structure if you return something.
+        '400':
+          description: Bad Request. Validation errors or missing data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    get:
+      tags:
+        - Rider Coordinates
+      summary: Get Rider Coordinates
+      description: Retrieves rider coordinates based on user ID and optional date range.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          description: User ID of the rider.
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Start date for coordinate retrieval (ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: End date for coordinate retrieval (ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+        - name: appid
+          in: header
+          description: Application ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rider coordinates retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      rider:
+                        type: string
+                        description: rider id.
+                      coordinates:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Coordinate'
+                      appId:
+                        type: string
+                        description: App Id
+                      userId:
+                        type: string
+                        description: User Id
+        '400':
+          description: Bad Request. Validation errors or missing data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /v1/rider/coordinates/all:
+    get:
+      tags:
+        - Rider Coordinates
+      summary: Get All Riders Coordinates
+      description: Retrieves coordinates for all riders within an optional date range.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: startDate
+          in: query
+          description: Start date for coordinate retrieval (ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: End date for coordinate retrieval (ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+        - name: appid
+          in: header
+          description: Application ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All riders coordinates retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      riders:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            rider:
+                              type: string
+                              description: rider id.
+                            coordinates:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/Coordinate'
+                            appId:
+                              type: string
+                              description: App Id
+                            userId:
+                              type: string
+                              description: User Id
+        '400':
+          description: Bad Request. Validation errors or missing data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /v1/rider/coordinates/export:
+    get:
+      tags:
+        - Rider Coordinates
+      summary: Export Rider Coordinates to CSV
+      description: Exports rider coordinates to a CSV file.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: startDate
+          in: query
+          description: Start date for coordinate retrieval (ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: End date for coordinate retrieval (ISO 8601 format).
+          schema:
+            type: string
+            format: date-time
+        - name: appid
+          in: header
+          description: Application ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rider coordinates exported successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      fileUrl:
+                        type: string
+                        description: Url to download the exported file.
+        '400':
+          description: Bad Request. Validation errors or missing data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /v1/wallet/transactions/logs:
+    post:
+      tags:
+        - Wallet Transactions
+      summary: Save Wallet Transaction Log
+      description: Saves a wallet transaction log.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                  description: ID of the order related to the transaction.
+                  required: true
+                type:
+                  type: string
+                  enum:
+                    - before
+                    - after
+                  description: Type of wallet operation (before or after).
+                  required: true
+                entity:
+                  type: string
+                  enum:
+                    - merchant
+                    - rider
+                  description: Entity involved in the transaction (merchant or rider).
+                  required: true
+                balanceBefore:
+                  type: number
+                  description: Balance before the transaction (optional).
+                balanceAfter:
+                  type: number
+                  description: Balance after the transaction (optional).
+                holdAmountBefore:
+                  type: number
+                  description: Hold amount before the transaction (optional).
+                holdAmountAfter:
+                  type: number
+                  description: Hold amount after the transaction (optional).
+                earningAmountBefore:
+                  type: number
+                  description: Earning amount before the transaction (optional).
+                earningAmountAfter:
+                  type: number
+                  description: Earning amount after the transaction (optional).
+                storeId:
+                  type: string
+                  description: ID of the store (optional).
+                riderId:
+                  type: string
+                  description: ID of the rider (optional).
+                bookingId:
+                  type: string
+                  description: ID of the booking (optional).
+                appId:
+                  type: string
+                  description: ID of the application (optional).
+              required:
+                - orderId
+                - type
+                - entity
+      responses:
+        '201':
+          description: Wallet transaction log saved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/WalletTransactionLog' # Reference the response schema
+        '400':
+          description: Bad Request. Validation errors or missing data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string

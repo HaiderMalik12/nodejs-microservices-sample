@@ -7,13 +7,9 @@ import globalErrorHandler from '@order/middlewares/globalError';
 import { appRoutes } from '@order/middlewares/routesMiddlewares';
 import { standardMiddlewares } from '@order/middlewares/standardMiddlewars';
 import { notFoundError } from '@order/middlewares/notFoundError';
-import { connectRabbitMQ } from '@order/config/rabbitmq'
 
 // Establish MongoDB connection
 mongoDBconnection();
-
-//RabbitMQ Connection
-connectRabbitMQ().then(() => { console.log('connected to rabbitMQ') }).catch(console.error)
 
 // Initialize Express app
 const app = express();

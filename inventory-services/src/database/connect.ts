@@ -6,13 +6,12 @@ export async function mongoDBconnection() {
   try {
     const connectionString = Number(process.env.USE_ATLAS) === 1 ? mongoUrl : process.env.MONGO_URL;
     await mongoose.connect(connectionString, {
-      readPreference: 'secondary', // Check if this is appropriate
+      readPreference: 'secondary',
     });
     console.info('Db successfully connected!');
     return 'Db successfully connected!';
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
-    throw error; // Re-throw the error to be handled by the calling code
+    throw error;
   }
-};
-
+}

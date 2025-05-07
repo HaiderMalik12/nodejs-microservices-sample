@@ -1,5 +1,7 @@
+import { getChannel } from '@order/config/rabbitmq';
 import orderModel from '@order/models/order';
 import mongoose from 'mongoose';
+import { publishToQueue } from '@order/v1/services/rabbitmq';
 interface CreateOrderInput {
   productId: string;
   quantity: number;
@@ -7,9 +9,23 @@ interface CreateOrderInput {
 
 export async function createOrder(payload: CreateOrderInput) {
   try {
-    return await orderModel.create(payload)
-  }
-  catch (error: any) {
+    const newOrder = await orderModel.create(payload);
+    const channel = getChannel();
+
+    if (channel) {
+      const queueName = 'orders_queue'; // Define your queue name
+      const messagePayload = {
+        productId: payload.productId,
+        quantity: payload.quantity,
+      };
+      await publishToQueue(queueName, channel, messagePayload);
+    } else {
+      console.warn('RabbitMQ channel not initialized. Order creation event not published.');
+      // Handle this scenario (e.g., logging, retry mechanism)
+    }
+
+    return newOrder;
+  } catch (error: any) {
     console.error('Error creating order:', error);
     if (error instanceof mongoose.Error.ValidationError) {
       throw new Error('Invalid order data provided.');
@@ -20,3 +36,4 @@ export async function createOrder(payload: CreateOrderInput) {
     throw new Error('Failed to create order. Please try again later.');
   }
 }
+
