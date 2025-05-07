@@ -13,7 +13,7 @@ export async function createOrder(payload: CreateOrderInput) {
     const channel = getChannel();
 
     if (channel) {
-      const queueName = 'orders_queue'; // Define your queue name
+      const queueName = 'orders_queue'
       const messagePayload = {
         productId: payload.productId,
         quantity: payload.quantity,
