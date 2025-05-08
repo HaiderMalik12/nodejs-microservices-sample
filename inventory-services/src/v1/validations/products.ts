@@ -1,4 +1,4 @@
-import { IProduct } from '@product/models/product';
+import { IProduct } from '@inventory/models/product';
 import Joi, { ObjectSchema } from 'joi';
 
 
@@ -10,9 +10,8 @@ export const validateSchema = (inputs: Record<string, any>, schema: ObjectSchema
 };
 export const validateUpdateProduct = (payload: IProduct) => {
   const schema = Joi.object({
-    name: Joi.string().optional(),
-    quantity: Joi.number().optional(),
-    price: Joi.number().optional(),
+    quantity: Joi.number().required(),
+    productId: Joi.string().required()
   })
   return validateSchema(payload, schema);
 };

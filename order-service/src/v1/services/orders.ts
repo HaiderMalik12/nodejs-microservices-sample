@@ -1,7 +1,6 @@
 import { getChannel } from '@order/config/rabbitmq';
 import orderModel from '@order/models/order';
 import mongoose from 'mongoose';
-import { publishToQueue } from '@order/v1/services/rabbitmq';
 interface CreateOrderInput {
   productId: string;
   quantity: number;
@@ -13,12 +12,19 @@ export async function createOrder(payload: CreateOrderInput) {
     const channel = getChannel();
 
     if (channel) {
-      const queueName = 'orders_queue'
+      const exchange = 'order';
+      await channel.assertExchange(exchange, 'topic', { durable: true });
       const messagePayload = {
         productId: payload.productId,
         quantity: payload.quantity,
       };
-      await publishToQueue(queueName, channel, messagePayload);
+      channel.publish(
+        exchange,
+        'order.created',
+        Buffer.from(JSON.stringify(messagePayload)),
+        { persistent: true }
+      );
+      console.log('Published order.created event');
     } else {
       console.warn('RabbitMQ channel not initialized. Order creation event not published.');
       // Handle this scenario (e.g., logging, retry mechanism)

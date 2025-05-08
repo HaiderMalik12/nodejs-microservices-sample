@@ -22,10 +22,10 @@
     "resolveJsonModule": true,
     "plugins": [{ "transform": "typescript-transform-paths" }, { "transform": "typescript-transform-paths", "afterDeclarations": true }],
     "paths": {
-      "@product/*": ["src/*"]
-    },
+      "@inventory/*": ["src/*"]
+    }
   },
   "ts-node": {
-      "swc": true
+    "swc": true
   }
 }

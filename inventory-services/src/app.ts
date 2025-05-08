@@ -3,13 +3,16 @@ import express from 'express';
 import 'express-async-errors'; // Import the library
 import http from 'http';
 import { mongoDBconnection } from './database/connect';
-import globalErrorHandler from '@order/middlewares/globalError';
-import { appRoutes } from '@order/middlewares/routesMiddlewares';
-import { standardMiddlewares } from '@order/middlewares/standardMiddlewars';
-import { notFoundError } from '@order/middlewares/notFoundError';
+import globalErrorHandler from '@inventory/middlewares/globalError';
+import { standardMiddlewares } from '@inventory/middlewares/standardMiddlewars';
+import { notFoundError } from '@inventory/middlewares/notFoundError';
+import { consumeOrderMessages } from '@inventory/v1/events/orderConsumer';
 
 // Establish MongoDB connection
 mongoDBconnection();
+// connectRabbitMQ().then(() => console.log('RabbitMQ connected')).catch(console.error);
+consumeOrderMessages().then(() => console.log('Order consumer started')).catch(console.error);
+
 
 // Initialize Express app
 const app = express();
@@ -18,7 +21,7 @@ const app = express();
 standardMiddlewares(app);
 
 // Route setup
-appRoutes(app);
+// appRoutes(app);
 
 app.use(notFoundError);
 
