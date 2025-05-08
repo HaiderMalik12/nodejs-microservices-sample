@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { RESPONSE } from '../utility/responseCode';
+import { RESPONSE } from './responseCode';
 
 type ResponseData = {
   message?: string;
