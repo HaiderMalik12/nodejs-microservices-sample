@@ -15,7 +15,7 @@ export async function createOrder(payload: CreateOrderInput) {
       const exchange = 'order';
       await channel.assertExchange(exchange, 'topic', { durable: true });
       const messagePayload = {
-        productId: payload.productId,
+        _id: payload.productId,
         quantity: payload.quantity,
       };
       channel.publish(

@@ -22,11 +22,11 @@ export async function consumeOrderMessages() {
                     // Validate and update product
                     await validateUpdateProduct(payload);
                     console.log('Inventory Service received:', payload);
-                    await updateProduct({ _id: payload._id, quantity: payload.quantity });
+                    await updateProduct(payload);
 
                     // Publish inventory.status.updated event
                     const inventoryUpdateEvent = {
-                        productId: payload._id,
+                        _id: payload._id,
                         quantity: payload.quantity,
                         status: 'updated', // Or other status logic
                     };
@@ -46,7 +46,7 @@ export async function consumeOrderMessages() {
 
                     // Publish inventory.status.updated with failure status
                     const inventoryUpdateFailureEvent = {
-                        productId: payload._id,
+                        _id: payload._id,
                         quantity: payload.quantity,
                         status: 'failed', // Failure status
                         error: error.message,

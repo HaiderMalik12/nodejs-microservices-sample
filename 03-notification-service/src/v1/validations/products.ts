@@ -1,4 +1,3 @@
-import { IProduct } from '@inventory/models/product';
 import Joi, { ObjectSchema } from 'joi';
 
 
@@ -8,10 +7,10 @@ export const validateSchema = (inputs: Record<string, any>, schema: ObjectSchema
     throw new Error(error.details ? error.details[0].message.replace(/['"]+/g, '') : 'Validation failed');
   }
 };
-export const validateUpdateProduct = (payload: IProduct) => {
+export const validateInventoryMessage = (payload: any) => {
   const schema = Joi.object({
     quantity: Joi.number().required(),
-    _id: Joi.string().required()
+    productId: Joi.string().required()
   })
   return validateSchema(payload, schema);
 };
