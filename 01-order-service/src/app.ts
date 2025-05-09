@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
-import 'express-async-errors'; // Import the library
+import 'express-async-errors';
 import http from 'http';
-import { mongoDBconnection } from './database/connect';
+import { mongoDBconnection } from '@order/config/connect';
 import globalErrorHandler from '@order/middlewares/globalError';
 import { appRoutes } from '@order/middlewares/routesMiddlewares';
 import { standardMiddlewares } from '@order/middlewares/standardMiddlewars';
@@ -15,7 +15,6 @@ mongoDBconnection();
 //RabbitMQ Connection
 connectRabbitMQ().then(() => { console.log('connected to rabbitMQ') }).catch(console.error)
 
-// Initialize Express app
 const app = express();
 
 // Middleware setup
@@ -52,7 +51,6 @@ function normalizePort(val: string) {
   return port >= 0 ? port : false;
 }
 
-// Error handling function
 function onError(error: any) {
   if (error.syscall !== 'listen') throw error;
 
