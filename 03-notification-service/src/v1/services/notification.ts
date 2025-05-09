@@ -1,3 +1,5 @@
+import { publishNotificationSentEvent } from "@notification/v1/events/publishNotification";
+
 export async function sendNotification(payload: { _id: string, quantity: number, status: string, error?: string }) {
   const { _id, quantity, status, error } = payload;
 
@@ -11,4 +13,10 @@ export async function sendNotification(payload: { _id: string, quantity: number,
 
   // Add email/SMS/notification logic here
   // e.g., integrate with an email service like nodemailer, Twilio, etc.
+
+  await publishNotificationSentEvent({
+    recipient: 'jane@gamil.com',
+    type: 'inventory-update',
+    status: 'sent'
+  });
 }
