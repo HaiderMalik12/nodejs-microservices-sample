@@ -8,6 +8,7 @@ import { standardMiddlewares } from '@inventory/middlewares/standardMiddlewars';
 import { notFoundError } from '@inventory/middlewares/notFoundError';
 import { consumeOrderMessages } from '@inventory/v1/events/orderConsumer';
 import { consumeOrderCancelledMessages } from './v1/events/orderCancelConsumer';
+import { appRoutes } from '@inventory/middlewares/routesMiddlewares';
 
 // Establish MongoDB connection
 mongoDBconnection();
@@ -23,7 +24,7 @@ const app = express();
 standardMiddlewares(app);
 
 // Route setup
-// appRoutes(app);
+appRoutes(app);
 
 app.use(notFoundError);
 

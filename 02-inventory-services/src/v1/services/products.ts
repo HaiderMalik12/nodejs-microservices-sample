@@ -6,6 +6,23 @@ interface UpdateProductInput {
   quantity: number;
 }
 
+interface CreateProductInput {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+export async function createProduct(payload: CreateProductInput) {
+  try {
+    return await productModel.create(payload);
+  }
+  catch (error: any) {
+    console.error('Error creating product:', error);
+    throw new Error('Failed to create product. Please try again later.');
+  }
+}
+
+
 export async function updateProduct(payload: UpdateProductInput) {
   try {
     return await productModel.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(payload._id) }, {
