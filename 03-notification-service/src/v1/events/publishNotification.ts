@@ -12,7 +12,6 @@ export async function publishNotificationSentEvent(notification: NotificationInp
     await channel.assertExchange('notification', 'topic', { durable: true });
 
     const eventPayload = {
-        notificationId: notification.id,
         recipient: notification.recipient,
         type: notification.type,
         status: notification.status, // 'sent' or 'failed'
