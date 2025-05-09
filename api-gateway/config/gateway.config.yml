@@ -1,0 +1,40 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/apiEndpoints
+  orders:
+    host: localhost
+    methods: "GET,POST,PUT,DELETE"
+    port: 3000
+    paths: "/v1/orders*"
+serviceEndpoints:
+  # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
+  ordersService:
+    url: "http://localhost:3000"
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
+  orders:
+    apiEndpoints:
+      - orders
+    policies:
+      # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+      # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: ordersService
+              changeOrigin: true
+      - log:
+          action:
+            message: "${req.method} ${req.originalUrl}"
