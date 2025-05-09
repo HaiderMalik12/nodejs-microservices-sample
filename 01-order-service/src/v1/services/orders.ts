@@ -43,3 +43,42 @@ export async function createOrder(payload: CreateOrderInput) {
   }
 }
 
+export async function cancelOrder(orderId: string, payload: { reason: string }) {
+  try {
+    const order = await orderModel.findById(new mongoose.Types.ObjectId(orderId));
+    if (!order) {
+      throw new Error('Order not found');
+    }
+    order.status = 'cancelled';
+    order.cancelReason = payload.reason;
+    await order.save();
+
+    const channel = getChannel();
+    if (channel) {
+      const exchange = 'order';
+      await channel.assertExchange(exchange, 'topic', { durable: true });
+      const cancelPayload = {
+        _id: order._id,
+        reason: payload.reason,
+        productId: order.productId,
+        quantity: order.quantity,
+      };
+      channel.publish(
+        exchange,
+        'order.cancelled',
+        Buffer.from(JSON.stringify(cancelPayload)),
+        { persistent: true }
+      );
+      console.log('Published order.cancelled event');
+    } else {
+      console.warn('RabbitMQ channel not initialized. Order cancellation event not published.');
+      // Handle this scenario (e.g., logging, retry mechanism)
+    }
+
+    return order;
+  } catch (error: any) {
+    console.error('Error cancelling order:', error);
+    throw new Error('Failed to cancel order. Please try again later.');
+  }
+}
+

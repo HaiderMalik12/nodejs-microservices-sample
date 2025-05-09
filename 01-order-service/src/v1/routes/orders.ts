@@ -17,6 +17,13 @@ class OrderRoutes {
       })
     );
 
+    this.router.put(
+      '/cancel/:id',
+      expressAsyncHandler((req, res) => {
+        OrderController.cancel(req, res);
+      })
+    );
+
     return this.router;
   }
 }

@@ -7,11 +7,13 @@ import globalErrorHandler from '@inventory/middlewares/globalError';
 import { standardMiddlewares } from '@inventory/middlewares/standardMiddlewars';
 import { notFoundError } from '@inventory/middlewares/notFoundError';
 import { consumeOrderMessages } from '@inventory/v1/events/orderConsumer';
+import { consumeOrderCancelledMessages } from './v1/events/orderCancelConsumer';
 
 // Establish MongoDB connection
 mongoDBconnection();
 // connectRabbitMQ().then(() => console.log('RabbitMQ connected')).catch(console.error);
 consumeOrderMessages().then(() => console.log('Order consumer started')).catch(console.error);
+consumeOrderCancelledMessages().then(() => console.log('Order cancel consumer started')).catch(console.error);
 
 
 // Initialize Express app

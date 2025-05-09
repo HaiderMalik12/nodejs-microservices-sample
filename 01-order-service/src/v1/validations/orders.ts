@@ -17,3 +17,10 @@ export const validateCreateOrder = <T extends keyof Request>(req: Request, prope
   })
   return validateSchema(req[property] as RequestProperties<T>, schema);
 };
+export const validateCancelOrder = <T extends keyof Request>(req: Request, property: T) => {
+  // Schema to validate the entire document
+  const schema = Joi.object({
+    reason: Joi.string().required(),
+  })
+  return validateSchema(req[property] as RequestProperties<T>, schema);
+};
