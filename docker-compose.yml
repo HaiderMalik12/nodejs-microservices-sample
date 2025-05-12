@@ -11,13 +11,62 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - faba_net
 
-  # order-service:
-  #   build: ./order-service
-  #   environment:
-  #     - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
-  #   depends_on:
-  #     - rabbitmq
+  order-service:
+    build:
+      context: ./01-order-service
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - MONGODB_URL=mongodb+srv://haidermalik504:yourpassword@clusterfaba.mongodb.net/faba_orders?retryWrites=true&w=majority
+    ports:
+      - "4001:4001"
+    depends_on:
+      - rabbitmq
+    networks:
+      - faba_net
+
+  inventory-service:
+    build:
+      context: ./02-inventory-services
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - MONGODB_URL=mongodb+srv://haidermalik504:yourpassword@clusterfaba.mongodb.net/faba_inventory?retryWrites=true&w=majority
+    ports:
+      - "4002:4002"
+    depends_on:
+      - rabbitmq
+    networks:
+      - faba_net
+
+  notification-service:
+    build:
+      context: ./03-notification-service
+    environment:
+      - PORT=4003
+    ports:
+      - "4003:4003"
+    depends_on:
+      - rabbitmq
+    networks:
+      - faba_net
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    environment:
+      - PORT=4004
+    ports:
+      - "4004:4004"
+    depends_on:
+      - rabbitmq
+    networks:
+      - faba_net
 
 volumes:
   rabbitmq-data:
+
+networks:
+  faba_net:
+    driver: bridge
