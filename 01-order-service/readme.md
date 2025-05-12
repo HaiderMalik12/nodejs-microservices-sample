@@ -1,37 +1,16 @@
-# Logging Service
+# Order Service
 
-This is a Node.js backend service built with TypeScript, designed to handle and process logs. It utilizes Express.js for the API, MongoDB for data storage, and AWS S3 for file uploads.
-
-## Features
-
-- **API Endpoints:** Provides RESTful API endpoints for log management.
-- **Data Persistence:** Uses MongoDB to store log data.
-- **File Uploads:** Supports file uploads to AWS S3.
-- **Authentication & Authorization:** Implements JWT-based authentication.
-- **Validation:** Uses Joi for request body validation.
-- **Logging:** Integrates Pino for structured logging with `pino-pretty` for development.
-- **Environment Configuration:** Uses `dotenv` for environment variable management.
-- **Error Handling:** Implements robust error handling using `express-async-errors`.
-- **Security:** Leverages `helmet` for enhanced security.
-- **Scheduled Tasks:** Uses `node-cron` for scheduled tasks.
-- **API Documentation:** Uses Swagger UI Express and YAML for API documentation.
-- **Application Settings Creation:** Creates application settings based on environment variables.
+This is a Node.js backend service built with TypeScript, designed to handle and process logs. It utilizes Express.js for the API, MongoDB for data storage
 
 ## Prerequisites
 
 - Node.js (>= 18)
 - npm or yarn
 - MongoDB
-- AWS account with S3 access
 
 ## Getting Started
 
 1.  **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/ZDS-RMP/logging-services
-    cd logging_service
-    ```
 
 2.  **Install dependencies:**
 
@@ -45,27 +24,8 @@ This is a Node.js backend service built with TypeScript, designed to handle and 
 
     ```
     NODE_ENV=development
-    MONGO_URL=mongodb://127.0.0.1:27017/zds_logs
-    DB_USER=
-    DB_PASSWORD=
-    DB_AUTH_SOURCE=
-    DB_HOST=
-    USE_ATLAS=0
-    DB_CLUSTER=
-    DB_NAME=
-    PORT=2005
-    DISPATCHER_JWT_SECRET=
-    ONDEMAND_JWT_SECRET=
-    BASEPATH=/logging
-    NEW_ACCESSKEYS3=
-    NEW_SECRETACCESSKEY=
-    NEW_REGION=
-    NEW_BUCKET_NAME=
-    DISPATCHER_BASE_URL=
-    CREATE_APP_SETTINGS=1
+    MONGO_URL=mongodb://127.0.0.1:27017/faba_orders
     ```
-
-    - **Note:** Adjust the `MONGO_URL`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `PORT`, JWT secrets, AWS S3 credentials, and other variables to match your environment.
 
 4.  **Build the project:**
 
@@ -90,10 +50,6 @@ This is a Node.js backend service built with TypeScript, designed to handle and 
       ```
 
       This will start the server using PM2 with 5 instances for load balancing and `pino-pretty` for formatted logs.
-
-6.  **Access API Documentation:**
-
-    Open your browser and navigate to `http://localhost:2005/logging/api-docs` (or the port and basepath you configured).
 
 ## Scripts
 
@@ -127,10 +83,6 @@ This is a Node.js backend service built with TypeScript, designed to handle and 
   - `moment`: Date manipulation.
   - `moment-timezone`: Timezone handling.
   - `node-cron`: Scheduled tasks.
-- **AWS:**
-  - `aws-sdk`: AWS SDK for S3.
-  - `multer`: Multipart form data handling.
-  - `multer-s3`: Multer storage for S3.
 - **Error Handling:**
   - `express-async-errors`: Handles asynchronous errors in Express.
   - `express-async-handler`: Simplified async error handling.
