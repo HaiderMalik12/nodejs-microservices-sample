@@ -7,11 +7,9 @@ export async function consumeInventoryMessages() {
         await channel.assertExchange('inventory', 'topic', { durable: true });
         const q = await channel.assertQueue('', { exclusive: true });
         await channel.bindQueue(q.queue, 'inventory', 'inventory.status.updated');
-        console.log('Notification Service listening to inventory.status.updated');
         channel.consume(q.queue, async (msg) => {
             if (msg) {
                 const payload = JSON.parse(msg.content.toString());
-                console.log('Notification Service received:', payload);
                 try {
                     await sendNotification(payload);
                     channel.ack(msg);

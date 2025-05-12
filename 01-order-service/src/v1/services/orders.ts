@@ -24,10 +24,8 @@ export async function createOrder(payload: CreateOrderInput) {
         Buffer.from(JSON.stringify(messagePayload)),
         { persistent: true }
       );
-      console.log('Published order.created event');
     } else {
       console.warn('RabbitMQ channel not initialized. Order creation event not published.');
-      // Handle this scenario (e.g., logging, retry mechanism)
     }
 
     return newOrder;
@@ -69,10 +67,8 @@ export async function cancelOrder(orderId: string, payload: { reason: string }) 
         Buffer.from(JSON.stringify(cancelPayload)),
         { persistent: true }
       );
-      console.log('Published order.cancelled event');
     } else {
       console.warn('RabbitMQ channel not initialized. Order cancellation event not published.');
-      // Handle this scenario (e.g., logging, retry mechanism)
     }
 
     return order;

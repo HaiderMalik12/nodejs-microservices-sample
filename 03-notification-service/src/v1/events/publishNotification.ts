@@ -25,8 +25,5 @@ export async function publishNotificationSentEvent(notification: NotificationInp
         Buffer.from(JSON.stringify(eventPayload))
     );
 
-    console.log('Published notification.sent:', eventPayload);
-
-    // Close the channel
     await channel.close();
 }
